@@ -4,14 +4,16 @@ plugins {
 	id 'java'
 }
 
-group = 'com.bm.world'
+group = 'com.bm.world.dep'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
+		
 	}
+	
 }
 
 repositories {
@@ -26,9 +28,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.cloud:spring-cloud-config-server'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	//implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.cloud:spring-cloud-stream'
@@ -36,9 +37,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'mysql:mysql-connector-java:8.0.30'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-
+	implementation('org.springframework.cloud:spring-cloud-starter-bootstrap')	
 }
 
 dependencyManagement {
