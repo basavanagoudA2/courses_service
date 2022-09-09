@@ -7,4 +7,9 @@ public interface ApplicationConstants {
 	//Declare the Controller class Constants
 	 public static final String BASE_URL="/bm/course";
 	 public static final String SAVE_COURSE_DETAILS="/save";
+	 public static final String UPDATE_COURSE_DETAILS="/update";
+	 
+	 
+	 //success message constraints
+	 public static final String COURSE_UPDATE_SUCESS_MESSAGE="course is updated with this courseId :";
 }

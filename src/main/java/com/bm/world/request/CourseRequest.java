@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 public class CourseRequest {
-	
+	private long courseId;
 	private String courseName;
 	private String duration;
 	private String faculityName;	
