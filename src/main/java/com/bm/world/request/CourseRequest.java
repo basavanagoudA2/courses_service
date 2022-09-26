@@ -2,8 +2,6 @@ package com.bm.world.request;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotBlank;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
