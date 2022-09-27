@@ -1,5 +1,6 @@
 package com.bm.world.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +28,7 @@ public class CoursesServiceImpl implements CoursesService {
 	@Autowired
 	CoursesRepository coursesRepository;
       private static final Logger LOG=LogManager.getLogger(CoursesServiceImpl.class);
+	List<CourseResponse> courseResponseList=new ArrayList<>();
 	/**
 	 * This method used for adding the course details/save the course details into
 	 * db
@@ -67,14 +69,38 @@ public class CoursesServiceImpl implements CoursesService {
 		return null;
 	}
 
+	/**
+	 * This method is used for fetching the all the course details from database
+	 * @return
+	 */
 	@Override
 	public List<CourseResponse> getAllCourses() {
-		return null;
+		LOG.info("Starting the fetching all course details.");
+		CourseResponse courseResponse=null;
+		if (ObjectUtils.isEmpty(courseResponseList)){
+			List<Courses> coursesList=coursesRepository.findAll();
+			if (!ObjectUtils.isEmpty(coursesList)){
+				for (Courses courses :coursesList) {
+					courseResponse=new CourseResponse();
+					BeanUtils.copyProperties(courses,courseResponse);
+					courseResponseList.add(courseResponse);
+				}
+				coursesList.clear();
+			}
+		}
+		LOG.debug("fetching All course details [{}].",courseResponseList);
+		LOG.info("complete the fetching all course details.");
+		return courseResponseList;
 	}
 
 	@Override
 	public CourseResponse getCourseDetailsByFacultyName(String facultyName) {
 		return null;
+	}
+
+	@Override
+	public void deleteCache() {
+		courseResponseList.clear();
 	}
 
 }

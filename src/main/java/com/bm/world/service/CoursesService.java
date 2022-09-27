@@ -18,4 +18,5 @@ public interface CoursesService {
 	public CourseResponse getCourseDetailsByCouresName(String coureName);
 	public List<CourseResponse> getAllCourses();
 	public CourseResponse getCourseDetailsByFacultyName(String facultyName);
+	public void deleteCache();
 }
