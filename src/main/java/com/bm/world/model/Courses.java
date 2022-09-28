@@ -31,8 +31,8 @@ public class Courses  {
 	private String courseName;
 	@Column(name = "duration")
 	private String duration;
-	@Column(name = "faculity_name")
-	private String faculityName;
+	@Column(name = "faculty_name")
+	private String facultyName;
 	@Column(name = "fees")
 	private long fees;
 	@Column(name = "contact_number")

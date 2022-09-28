@@ -8,7 +8,7 @@ import lombok.Data;
 public class CourseResponse {
 	private String courseName;
 	private String duration;
-	private String faculityName;
+	private String facultyName;
 	private long fees;
 	private String contactNumber;
 	private Date startDate;

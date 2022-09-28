@@ -25,6 +25,12 @@ public class CoursesServiceControllerAdvice {
 		return buildResponseEntity(apiError);
 	}
 
+	@ExceptionHandler(CourseDetailsNotFoundException.class)
+	public ResponseEntity<Object> handleCourseDetailsNotFoundException(CourseDetailsNotFoundException ex){
+		ApiError apiError=new ApiError(HttpStatus.NOT_FOUND);
+		apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
 	private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
 		return new ResponseEntity<>(apiError, apiError.getStatus());
 	}
