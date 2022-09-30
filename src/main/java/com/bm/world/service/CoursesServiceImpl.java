@@ -110,80 +110,93 @@ public class CoursesServiceImpl implements CoursesService {
     public List<CourseDetailsCustomizeResponse> getDetailsByFacultyName(String facultyName) throws ParseException {
         LOG.info("Starting the fetching course details by facultyName:[{}]", facultyName);
         CourseDetailsCustomizeResponse courseDetailsCustomizeResponse;
+        List<CourseDetailsCustomizeResponse> courseDetailsCustomizeResponseList1=null;
+        courseDetailsCustomizeResponse = new CourseDetailsCustomizeResponse();
         List<CourseDetailsCustomizeResponse> courseDetailsCustomizeResponseList = new ArrayList<>();
         if (courseDetailsCustomizeResponseList.isEmpty()) {
             List<Object[]> objectList = coursesRepository.getCourseDetailsByName(facultyName);
-            if (!ObjectUtils.isEmpty(objectList)) {
-                for (Object[] courseObjectArr : objectList) {
-                    courseDetailsCustomizeResponse = new CourseDetailsCustomizeResponse();
-                    if (!ObjectUtils.isEmpty(courseObjectArr[0])) {
-                        courseDetailsCustomizeResponse.setCourseName(String.valueOf(courseObjectArr[0]));
-                    }
-                    if (!ObjectUtils.isEmpty(courseObjectArr[1])) {
-                        courseDetailsCustomizeResponse.setDuration(String.valueOf(courseObjectArr[1]));
-                    }
-                    if (!ObjectUtils.isEmpty(courseObjectArr[2])) {
-                        courseDetailsCustomizeResponse.setFees(Long.valueOf(String.valueOf(courseObjectArr[2])));
-                    }
-                    if (!ObjectUtils.isEmpty(courseObjectArr[3])) {
-                        courseDetailsCustomizeResponse.setStartDate((Date) courseObjectArr[3]);
-                    }
-                    if (!ObjectUtils.isEmpty(courseObjectArr[4])) {
-                        courseDetailsCustomizeResponse.setFacultyName(String.valueOf(courseObjectArr[4]));
-                    }
-                    if (!ObjectUtils.isEmpty(courseObjectArr[5])) {
-                        courseDetailsCustomizeResponse.setContactNumber(String.valueOf(courseObjectArr[5]));
-                    }
-                    courseDetailsCustomizeResponseList.add(courseDetailsCustomizeResponse);
-                }
-                objectList.clear();
-            } else {
-                throw new CourseDetailsNotFoundException("course Details not available for this facultyName: " + facultyName);
-            }
+            courseDetailsCustomizeResponseList1 = objectListChecker(objectList, courseDetailsCustomizeResponse, courseDetailsCustomizeResponseList);
         }
-        LOG.debug("fetching All course details by facultyName [{}].", courseDetailsCustomizeResponseList);
-        LOG.info("complete fetching All course details by facultyName [{}].", courseDetailsCustomizeResponseList);
-        return courseDetailsCustomizeResponseList;
+        LOG.debug("fetching All course details by facultyName [{}].", courseDetailsCustomizeResponseList1);
+        LOG.info("complete fetching All course details by facultyName [{}].", courseDetailsCustomizeResponseList1);
+        return courseDetailsCustomizeResponseList1;
     }
 
     @Override
     public void deleteCache() {
-
+        //not implemented
     }
 
     /**
      * This method used for fetching the course details in next month
+     *
      * @return
      */
     @Override
     public List<CourseDetailsCustomizeResponse> getNextMonthCourses() {
         LOG.info("start the fetching next month course details");
         CourseDetailsCustomizeResponse courseDetailsCustomizeResponse;
+        courseDetailsCustomizeResponse = new CourseDetailsCustomizeResponse();
         List<CourseDetailsCustomizeResponse> courseDetailsCustomizeResponseList = new ArrayList<>();
+        List<CourseDetailsCustomizeResponse> courseDetailsCustomizeResponseList1 = null;
         if (ObjectUtils.isEmpty(courseDetailsCustomizeResponseList)) {
             List<Object[]> nextMonthCoursesObjectList = coursesRepository.fetchNextMonthCourses();
-            if (!ObjectUtils.isEmpty(nextMonthCoursesObjectList)) {
-                for (Object[] courseObjectArr: nextMonthCoursesObjectList) {
-                    courseDetailsCustomizeResponse=new CourseDetailsCustomizeResponse();
-                    if (!ObjectUtils.isEmpty(courseObjectArr[0])) {
-                        courseDetailsCustomizeResponse.setCourseName(String.valueOf(courseObjectArr[0]));
-                    }
-                    if (!ObjectUtils.isEmpty(courseObjectArr[1])) {
-                        courseDetailsCustomizeResponse.setDuration(String.valueOf(courseObjectArr[1]));
-                    }
-                    if (!ObjectUtils.isEmpty(courseObjectArr[2])) {
-                        courseDetailsCustomizeResponse.setFees(Long.valueOf(String.valueOf(courseObjectArr[2])));
-                    }
-                    if (!ObjectUtils.isEmpty(courseObjectArr[3])) {
-                        courseDetailsCustomizeResponse.setStartDate((Date) courseObjectArr[3]);
-                    }
-                    courseDetailsCustomizeResponseList.add(courseDetailsCustomizeResponse);
-                }
-            }else {
-                throw new CourseDetailsNotFoundException("Courses are not found for next Month");
+            courseDetailsCustomizeResponseList1 = objectListChecker(nextMonthCoursesObjectList, courseDetailsCustomizeResponse, courseDetailsCustomizeResponseList);
+        }
+        return courseDetailsCustomizeResponseList1;
+    }
+
+    private List<CourseDetailsCustomizeResponse> objectListChecker(List<Object[]> objectList, CourseDetailsCustomizeResponse courseDetailsCustomizeResponse, List<CourseDetailsCustomizeResponse> courseDetailsCustomizeResponseList) {
+        if (!ObjectUtils.isEmpty(objectList)) {
+            for (Object[] courseObjectArr : objectList) {
+                courseNameChecker(courseObjectArr, courseDetailsCustomizeResponse);
+                courseDetailsCustomizeResponseList.add(courseDetailsCustomizeResponse);
             }
+        } else {
+            throw new CourseDetailsNotFoundException("Courses are not found for next Month");
         }
         return courseDetailsCustomizeResponseList;
+    }
+
+    private void courseNameChecker(Object[] courseObjectArr, CourseDetailsCustomizeResponse courseDetailsCustomizeResponse) {
+        if (!ObjectUtils.isEmpty(courseObjectArr[0])) {
+            courseDetailsCustomizeResponse.setCourseName(String.valueOf(courseObjectArr[0]));
+        }
+        durationChecker(courseObjectArr, courseDetailsCustomizeResponse);
+    }
+
+    private void durationChecker(Object[] courseObjectArr, CourseDetailsCustomizeResponse courseDetailsCustomizeResponse) {
+        if (!ObjectUtils.isEmpty(courseObjectArr[1])) {
+            courseDetailsCustomizeResponse.setDuration(String.valueOf(courseObjectArr[1]));
+        }
+        feesChecker(courseObjectArr, courseDetailsCustomizeResponse);
+    }
+
+    private void feesChecker(Object[] courseObjectArr, CourseDetailsCustomizeResponse courseDetailsCustomizeResponse) {
+        if (!ObjectUtils.isEmpty(courseObjectArr[2])) {
+            courseDetailsCustomizeResponse.setFees(Long.valueOf(String.valueOf(courseObjectArr[2])));
+        }
+        startDateChecker(courseObjectArr, courseDetailsCustomizeResponse);
+    }
+
+    private void startDateChecker(Object[] courseObjectArr, CourseDetailsCustomizeResponse courseDetailsCustomizeResponse) {
+        if (!ObjectUtils.isEmpty(courseObjectArr[3])) {
+            courseDetailsCustomizeResponse.setStartDate((Date) courseObjectArr[3]);
+        }
+        facultyNameChecker(courseObjectArr, courseDetailsCustomizeResponse);
+    }
+
+    private void facultyNameChecker(Object[] courseObjectArr, CourseDetailsCustomizeResponse courseDetailsCustomizeResponse) {
+        if (!ObjectUtils.isEmpty(courseObjectArr[4])) {
+            courseDetailsCustomizeResponse.setFacultyName(String.valueOf(courseObjectArr[4]));
+        }
+        contactNumberChecker(courseObjectArr, courseDetailsCustomizeResponse);
+    }
+
+    private void contactNumberChecker(Object[] courseObjectArr, CourseDetailsCustomizeResponse courseDetailsCustomizeResponse) {
+        if (!ObjectUtils.isEmpty(courseObjectArr[5])) {
+            courseDetailsCustomizeResponse.setContactNumber(String.valueOf(courseObjectArr[5]));
+        }
     }
 
 }
