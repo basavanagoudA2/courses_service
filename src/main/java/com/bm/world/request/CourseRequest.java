@@ -11,7 +11,7 @@ public class CourseRequest {
 	private long courseId;
 	private String courseName;
 	private String duration;
-	private String faculityName;	
+	private String facultyName;
 	private long fees;
 	private String contactNumber;	
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")

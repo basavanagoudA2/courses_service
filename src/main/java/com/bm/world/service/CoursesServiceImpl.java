@@ -14,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import javax.persistence.EntityNotFoundException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This service class contains all the crude operations implementations for
@@ -53,11 +55,16 @@ public class CoursesServiceImpl implements CoursesService {
     @Override
     public String updateCourse(CourseRequest courseRequest) {
         LOG.info("Receive the update request:[{}]", courseRequest);
-        Courses course = coursesRepository.getReferenceById(courseRequest.getCourseId());
-        BeanUtils.copyProperties(courseRequest, course);
-        coursesRepository.save(course);
-        LOG.debug("update the course details: [{}]", course);
-        LOG.info("update the course and send response");
+            Optional<Courses> courses = coursesRepository.findById(courseRequest.getCourseId());
+            if (courses.isPresent()) {
+                Courses course = courses.get();
+                BeanUtils.copyProperties(courseRequest, course);
+                coursesRepository.save(course);
+                LOG.debug("update the course details: [{}]", course);
+                LOG.info("update the course and send response");
+            }else {
+                throw new CourseDetailsNotFoundException("Course details not available for this courseId update:"+courseRequest.getCourseId());
+            }
         return ApplicationConstants.COURSE_UPDATE_SUCESS_MESSAGE + courseRequest.getCourseId();
     }
 
@@ -110,7 +117,7 @@ public class CoursesServiceImpl implements CoursesService {
     public List<CourseDetailsCustomizeResponse> getDetailsByFacultyName(String facultyName) throws ParseException {
         LOG.info("Starting the fetching course details by facultyName:[{}]", facultyName);
         CourseDetailsCustomizeResponse courseDetailsCustomizeResponse;
-        List<CourseDetailsCustomizeResponse> courseDetailsCustomizeResponseList1=null;
+        List<CourseDetailsCustomizeResponse> courseDetailsCustomizeResponseList1 = null;
         courseDetailsCustomizeResponse = new CourseDetailsCustomizeResponse();
         List<CourseDetailsCustomizeResponse> courseDetailsCustomizeResponseList = new ArrayList<>();
         if (courseDetailsCustomizeResponseList.isEmpty()) {
