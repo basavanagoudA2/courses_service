@@ -2,24 +2,29 @@ package com.bm.world.service;
 
 import com.bm.world.ApplicationConstants;
 import com.bm.world.custom.responses.CourseDetailsCustomizeResponse;
+import com.bm.world.domain.CourseUser;
 import com.bm.world.exceptions.CourseDetailsNotFoundException;
 import com.bm.world.model.Courses;
+import com.bm.world.repositories.CourseUserRepository;
 import com.bm.world.repositories.CoursesRepository;
 import com.bm.world.request.CourseRequest;
 import com.bm.world.responses.CourseResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import javax.persistence.EntityNotFoundException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * This service class contains all the crude operations implementations for
@@ -27,12 +32,29 @@ import java.util.Optional;
  *
  * @author goud_a
  */
-@Service
-public class CoursesServiceImpl implements CoursesService {
+@Service @RequiredArgsConstructor @Log4j2
+public class CoursesServiceImpl implements CoursesService, UserDetailsService {
     @Autowired
     CoursesRepository coursesRepository;
+    private final CourseUserRepository courseUserRepository;
+
     private static final Logger LOG = LogManager.getLogger(CoursesServiceImpl.class);
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        CourseUser courseUser=courseUserRepository.findByUserName(username);
+        if(courseUser==null){
+            log.error("user is not found in database");
+            throw new UsernameNotFoundException("user is not found in database");
+        }else {
+            log.info("user is found in database:{}",username);
+        }
+        Collection<SimpleGrantedAuthority> authorities=new ArrayList<>();
+        courseUser.getRoles().forEach(roles->{
+            authorities.add(new SimpleGrantedAuthority(roles.getName()));
+        });
+        return new User(courseUser.getUserName(),courseUser.getPassword(),authorities);
+    }
     /**
      * This method used for adding the course details/save the course details into
      * db
@@ -205,5 +227,6 @@ public class CoursesServiceImpl implements CoursesService {
             courseDetailsCustomizeResponse.setContactNumber(String.valueOf(courseObjectArr[5]));
         }
     }
+
 
 }
